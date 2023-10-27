@@ -1,0 +1,11 @@
+version: '3'
+services:
+  python3:
+    build: .
+    container_name: 'python3'
+    tty: true
+    ports:
+      - "5001:5000"
+    volumes:
+      - ./opt:/usr/src/app
+    command: python3 main.py
