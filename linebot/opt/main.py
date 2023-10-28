@@ -62,7 +62,7 @@ def handle_message(event):
     cur = conn.cursor(dictionary=True)
 
     cur.execute(query_counts)
-    result = cur.fetchone()
+    result = cur.fetchall()
 
     if not result:
         line_bot_api.reply_message(
