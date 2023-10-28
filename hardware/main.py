@@ -39,5 +39,10 @@ def read_distance():
 connect()
 
 while True:
-   read_distance()
-   utime.sleep(0.1)
+    val1 = read_distance()
+    utime.sleep(0.1)
+    val2 = read_distance()
+    utime.sleep(0.1)
+    
+    if val1-val2 >5  or val1-val2 < -5:
+        print("5cm 以上の差分が出ました")
