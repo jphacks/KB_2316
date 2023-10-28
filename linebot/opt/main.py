@@ -70,9 +70,8 @@ def handle_message(event):
         )
     else:
         # SQLに登録
-        insert_query = f"Insert INTO users (uuid,user_name) values({uuid},{userid})"
 
-        cur.execute(insert_query)
+        cur.execute("Insert INTO users (uuid,user_name) values(%s,%s)", uuid, userid)
         conn.commit()
 
     conn.close()
