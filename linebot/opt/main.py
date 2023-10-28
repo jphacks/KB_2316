@@ -45,7 +45,15 @@ def handle_message(event):
     line_bot_api.reply_message(
         event.reply_token, TextSendMessage(text=event.message.text)
     )
-    print(event)
+    print(event.source.userId)
+
+    # 1. メッセージを受信してUUIDを受けとり、変数に格納する
+
+    # 2. その変数を用いてSQLのcountsテーブルに情報があるか検索する
+
+    # 3. もし一件もなければUUIDが間違っている可能性があるので再度入力を促すメッセージを送信する
+
+    # 4. 逆に件数があった場合はuserテーブルに uuid = uuid, user_name = userId として登録する
 
 
 if __name__ == "__main__":
