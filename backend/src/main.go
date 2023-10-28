@@ -3,41 +3,63 @@ package main
 import (
 	"fmt"
 	"net/http"
+	"os"
 	"r/models"
 	"time"
 
+	"github.com/joho/godotenv"
 	"github.com/labstack/echo/v4"
-	"gorm.io/driver/sqlite"
+	"github.com/labstack/echo/v4/middleware"
+	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
 
 var db *gorm.DB
 
 func init() {
+	loadEnv()
 	models.InitDB()
+
+}
+
+func loadEnv() {
+	err := godotenv.Load(".env")
+	if err != nil {
+		fmt.Printf("読み込み出来ませんでした: %v", err)
+	}
 }
 
 func main() {
-
+	connectInfo := fmt.Sprintf(
+		"%s:%s@tcp(db:3306)/%s?charset=utf8mb4&parseTime=True&loc=Local",
+		os.Getenv("MYSQL_USER"),
+		os.Getenv("MYSQL_PASSWORD"),
+		os.Getenv("MYSQL_DATABASE"),
+	)
 	var err error
-	_, err = gorm.Open(sqlite.Open("test.db"), &gorm.Config{})
+	db, err = gorm.Open(mysql.Open(connectInfo), &gorm.Config{})
 	if err != nil {
 		panic("DB connect Error " + err.Error())
 	}
 
 	e := echo.New()
 
-	e.GET("/health", func(c echo.Context) error {
-		return c.String(200, "OK")
-	})
+	e.Use(middleware.CORS())
 
 	g := e.Group("/api/v1")
 
 	g.POST("/record/:uuid", CreateRecord)
+
 	g.GET("/get/:uuid", GetAllRecord)
+
 	g.GET("/get/:uuid/:year/:month/:day", GetDayRecord)
 
+	g.GET("/health", func(c echo.Context) error {
+		return c.JSON(http.StatusOK, "health : OK")
+	})
+
 	e.Start(":1991")
+
 }
 
 func CreateRecord(c echo.Context) error {
