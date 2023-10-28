@@ -9,6 +9,9 @@ from linebot.models import (
 )
 import os
 from dotenv import load_dotenv
+import mysql.connector
+from datetime import datetime
+
 
 # .envファイルの内容を読み込見込む
 load_dotenv()
@@ -42,10 +45,32 @@ def callback():
 
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
-    line_bot_api.reply_message(
-        event.reply_token, TextSendMessage(text=event.message.text)
+    uuid = event.message.text
+    userid = event.source.user_id
+
+    conn = mysql.connector.connect(
+        user="root", password="kv3riopme1act", host="133.242.18.204", database="data"
     )
-    print(event.source.userId)
+
+    if not conn.is_connected():
+        raise Exception("MySQLサーバーへ接続できません")
+
+    query_counts = f"""
+    SELECT * FROM counts
+    WHERE uuid = '{uuid}'
+    """
+    cur = conn.cursor(dictionary=True)
+
+    cur.execute(query_counts)
+    result = cur.fetchone()
+
+    if not result:
+        line_bot_api.reply_message(
+            event.reply_token, TextSendMessage(text=event.message.text)
+        )
+    else:
+        # SQLに登録
+        pass
 
     # 1. メッセージを受信してUUIDを受けとり、変数に格納する
 
