@@ -32,6 +32,7 @@ func main() {
 	g := e.Group("/api/v1")
 
 	g.POST("/record/:uuid", CreateRecord)
+	g.GET("/get/:uuid", GetAllRecord)
 
 	e.Start(":1991")
 }
@@ -48,4 +49,19 @@ func CreateRecord(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusOK, d)
+}
+
+func GetAllRecord(c echo.Context) error {
+	var user models.User
+	uuid := c.Param("uuid")
+
+	if err := db.Preload("Counts").Where("uuid = ?", uuid).First(&user).Error; err != nil {
+		return c.JSON(http.StatusNotFound, echo.Map{
+			"message": "User not found or another error occurred",
+			"error":   err.Error(),
+		})
+	}
+
+	return c.JSON(http.StatusOK, user)
+
 }
