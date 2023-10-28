@@ -59,7 +59,7 @@ def handle_message(event):
     SELECT * FROM counts
     WHERE uuid = '{uuid}'
     """
-    cur = conn.cursor()
+    cur = conn.cursor(dictionary=True)
 
     cur.execute(query_counts)
     result = cur.fetchone()
@@ -71,7 +71,13 @@ def handle_message(event):
     else:
         # SQLに登録
 
-        cur.execute("Insert INTO users (uuid,user_name) values(%s,%s)", uuid, userid)
+        cur.execute(
+            "Insert INTO users (uuid,user_name) values(%s,%s)",
+            (
+                uuid,
+                userid,
+            ),
+        )
         conn.commit()
 
     conn.close()
