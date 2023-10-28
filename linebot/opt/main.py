@@ -59,7 +59,7 @@ def handle_message(event):
     SELECT * FROM counts
     WHERE uuid = '{uuid}'
     """
-    cur = conn.cursor(dictionary=True)
+    cur = conn.cursor()
 
     cur.execute(query_counts)
     result = cur.fetchone()
