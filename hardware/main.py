@@ -43,15 +43,18 @@ def read_distance():
     distance = (timepassed * 0.0343) / 2
     print("dinstance: ",distance,"cm")
 
-connect()
+def main():
+    connect()
+    while True:
+        val1 = read_distance()
+        utime.sleep(0.1)
+        val2 = read_distance()
+        utime.sleep(0.1)
+        
+        if val1-val2 >5  or val1-val2 < -5:
+            print("5cm 以上の差分が出ました")
+            send_post_request()
+            utime.sleep(600)
 
-while True:
-    val1 = read_distance()
-    utime.sleep(0.1)
-    val2 = read_distance()
-    utime.sleep(0.1)
-    
-    if val1-val2 >5  or val1-val2 < -5:
-        print("5cm 以上の差分が出ました")
-        send_post_request()
-        utime.sleep(600)
+if __name__=='__main__':
+    main()
