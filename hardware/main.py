@@ -1,12 +1,14 @@
 from machine import Pin
 import time
 import network
+import urequests
 
 trigger = Pin(14,Pin.OUT)
 echo = Pin(15,Pin.IN)
 
 ssid = 'にんじん🥕'
 password = 'mmmiii88'
+url ="http://133.242.18.204:8080/api/v1/record/b7f0542f"
 
 def connect():
     wlan = network.WLAN(network.STA_IF)
@@ -21,6 +23,11 @@ def connect():
         print( 'IPアドレス = ' + status[0] )
 
 ] )
+
+def send_post_request():
+    #POST リクエストを送信する場所
+    response = urequests.post(url)
+    print(response.text)
         
 def read_distance():
     trigger.low()
@@ -46,3 +53,5 @@ while True:
     
     if val1-val2 >5  or val1-val2 < -5:
         print("5cm 以上の差分が出ました")
+        send_post_request()
+        utime.sleep(600)
