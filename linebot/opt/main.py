@@ -70,15 +70,13 @@ def handle_message(event):
         )
     else:
         # SQLに登録
-        pass
+        insert_query = f"Insert INTO users (uuid,user_name) values({uuid},{userid})"
 
-    # 1. メッセージを受信してUUIDを受けとり、変数に格納する
+        cur.execute(insert_query)
+        conn.commit()
 
-    # 2. その変数を用いてSQLのcountsテーブルに情報があるか検索する
-
-    # 3. もし一件もなければUUIDが間違っている可能性があるので再度入力を促すメッセージを送信する
-
-    # 4. 逆に件数があった場合はuserテーブルに uuid = uuid, user_name = userId として登録する
+    conn.close()
+    cur.close()
 
 
 if __name__ == "__main__":
