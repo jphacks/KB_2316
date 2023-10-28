@@ -80,8 +80,8 @@ def handle_message(event):
         )
         conn.commit()
 
-    conn.close()
     cur.close()
+    conn.close()
 
 
 if __name__ == "__main__":
