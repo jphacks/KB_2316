@@ -1,9 +1,15 @@
 package main
 
 import (
+	"r/models"
+
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 )
+
+func init() {
+	models.InitDB()
+}
 
 func main() {
 
