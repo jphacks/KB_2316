@@ -1,6 +1,5 @@
 {
   "compilerOptions": {
-    "baseUrl": "/r-frontend"
+    "baseUrl": "."
   }
 }
-
