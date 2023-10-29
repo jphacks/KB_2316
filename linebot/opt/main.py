@@ -4,6 +4,7 @@ from linebot import LineBotApi, WebhookHandler
 from linebot.exceptions import InvalidSignatureError
 from linebot.models import (
     MessageEvent,
+    FollowEvent,
     TextMessage,
     TextSendMessage,
 )
@@ -41,6 +42,16 @@ def callback():
         abort(400)
 
     return "OK"
+
+
+@handler.add(FollowEvent)  # FollowEventをimportするのを忘れずに！
+def follow_message(event):  # event: LineMessagingAPIで定義されるリクエストボディ
+    # print(event)
+
+    if event.type == "follow":  # フォロー時のみメッセージを送信
+        line_bot_api.reply_message(
+            event.reply_token, TextSendMessage(text="エコーを利用してくれてありがとう☺️\n連携のためにエコーに記載されているIDを送信してね！")
+        )  # イベントの応答に用いるトークン
 
 
 @handler.add(MessageEvent, message=TextMessage)
