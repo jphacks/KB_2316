@@ -1,4 +1,4 @@
 module.exports = {
   reactStrictMode: true,
-  basePath: "/kb_2316" || "",
+  basePath: "/KB_2316" || "",
 };
