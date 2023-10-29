@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import { useRouter } from "next/router";
 
@@ -54,6 +56,7 @@ const Page = () => {
         .then((res) => res.json())
         .then((x) => {
           setData(x);
+          console.log(x);
         });
     }
   }, [uuid, year, month, day]); // year, month, day を依存配列に追加
