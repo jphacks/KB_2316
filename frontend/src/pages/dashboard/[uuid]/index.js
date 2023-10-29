@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 
 import Head from "next/head";
 import { subDays, subHours } from "date-fns";
-import { Box, Container, Unstable_Grid2 as Grid } from "@mui/material";
+import { Box, Card, Container, Unstable_Grid2 as Grid } from "@mui/material";
 import { Layout as DashboardLayout } from "src/layouts/dashboard/layout";
 import { OverviewBudget } from "src/sections/overview/overview-budget";
 import { OverviewLatestOrders } from "src/sections/overview/overview-latest-orders";
@@ -14,6 +14,10 @@ import { StaticDatePicker } from "@mui/x-date-pickers-pro";
 import { LocalizationProvider, DatePicker } from "@mui/x-date-pickers-pro";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import ja from "date-fns/locale/ja";
+import { API_URL } from "src/config";
+import Button from "@mui/material/Button";
+import Stack from "@mui/material/Stack";
+import { CardHeader } from "@mui/material";
 
 const now = new Date();
 
@@ -41,16 +45,29 @@ const Page = () => {
   const { uuid } = router.query;
 
   const year = now.getFullYear();
-  const month = now.getMonth() + 1; // getMonth()は0から11の範囲で月を返します、従って+1が必要です
+  const month = now.getMonth() + 1;
   const day = now.getDate();
 
   useEffect(() => {
-    fetch(`http://localhost:1991/api/v1/${uuid}/${year}/${month}/${day}`)
-      .then((res) => res.json())
-      .then((data) => {
-        setData(data.data);
-      });
-  }, []);
+    if (uuid && year && month && day) {
+      fetch(`${API_URL}/api/v1/get/${uuid}/${year}/${month}/${day}`)
+        .then((res) => res.json())
+        .then((x) => {
+          setData(x);
+        });
+    }
+  }, [uuid, year, month, day]); // year, month, day を依存配列に追加
+
+  let year2 = data2.getFullYear();
+  let month2 = data2.getMonth() + 1;
+  let day2 = data2.getDate();
+
+  // data2が変更されたら実行
+  useEffect(() => {
+    year2 = data2.getFullYear();
+    month2 = data2.getMonth() + 1;
+    day2 = data2.getDate();
+  }, [data2]);
 
   let sum = 0;
 
@@ -60,8 +77,9 @@ const Page = () => {
     }
   }
 
-  console.log(sum);
-  console.log(data);
+  const routePage = () => {
+    router.push(`/dashboard/${uuid}/${year2}/${month2}/${day2}`);
+  };
 
   return (
     <>
@@ -101,7 +119,7 @@ const Page = () => {
               </Grid>
             </Grid>
             <Grid container spacing={3}>
-              <Grid xs={12} md={12} lg={8}>
+              <Grid xs={12} md={12} lg={5}>
                 <OverviewLatestOrders
                   uuid={uuid}
                   orders={[
@@ -124,18 +142,33 @@ const Page = () => {
                   sx={{ height: "100%" }}
                 />
               </Grid>
+              <Grid xs={12} md={12} lg={5}>
+                <Card sx={{ height: "100%" }}>
+                  <CardHeader title="記録検索" />
+                  <Box mt={4}>
+                    <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={ja}>
+                      <StaticDatePicker
+                        Picker
+                        displayStaticWrapperAs="desktop"
+                        value={data2}
+                        onChange={(newValue) => {
+                          setData2(newValue);
+                        }}
+                      />
+                    </LocalizationProvider>
+                    <Box xs={1} sx={{ alignItems: "center", margin: "auto", width: "200px" }}>
+                      <Grid item>
+                        <Stack spacing={2}>
+                          <Button variant="contained" href="" onClick={routePage}>
+                            検索
+                          </Button>
+                        </Stack>
+                      </Grid>
+                    </Box>
+                  </Box>
+                </Card>
+              </Grid>
             </Grid>
-            <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={ja}>
-              <StaticDatePicker
-                Picker
-                displayStaticWrapperAs="desktop"
-                value={data2}
-                onChange={(newValue) => {
-                  setData2(newValue);
-                }}
-              />
-            </LocalizationProvider>
-            <button onClick={() => console.log(data2.getDate())}></button>
           </Container>
         </Box>
       </DashboardLayout>
