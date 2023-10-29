@@ -43,6 +43,7 @@ def read_distance():
     timepassed = signalon - signaloff
     distance = (timepassed * 0.0343) / 2
     print("dinstance: ", distance, "cm")
+    return distance
 
 
 def main():
