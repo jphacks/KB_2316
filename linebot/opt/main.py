@@ -88,7 +88,9 @@ def handle_message(event):
         )
         conn.commit()
 
-        textx = f"IDを連携しました！エコーが緊急だと考えた時はこちらに警告が来ます!\n取得したデータはここから閲覧できます : https://jphacks.github.io/KB_2316/dashboard/{uuid}"
+        textx = (
+            f"IDを連携しました！エコーが緊急だと考えた時はこちらに警告が来ます!\n取得したデータはここから閲覧できます\nhttps://r-frontend.vercel.app/dashboard/{uuid}"
+        )
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text=textx))
 
     cur.close()
