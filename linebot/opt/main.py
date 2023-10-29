@@ -48,9 +48,7 @@ def handle_message(event):
     uuid = event.message.text
     userid = event.source.user_id
 
-    conn = mysql.connector.connect(
-        user="root", password="kv3riopme1act", host="133.242.18.204", database="data"
-    )
+    conn = mysql.connector.connect(user="root", password="kv3riopme1act", host="133.242.18.204", database="data")
 
     if not conn.is_connected():
         raise Exception("MySQLサーバーへ接続できません")
@@ -65,9 +63,7 @@ def handle_message(event):
     result = cur.fetchall()
 
     if not result:
-        line_bot_api.reply_message(
-            event.reply_token, TextSendMessage(text="IDが間違っています")
-        )
+        line_bot_api.reply_message(event.reply_token, TextSendMessage(text="IDが間違っている可能性があります💦 もう一度ご確認ください🙇‍♂️"))
     else:
         # SQLに登録
 
@@ -79,6 +75,7 @@ def handle_message(event):
             ),
         )
         conn.commit()
+        line_bot_api.reply_message(event.reply_token, TextSendMessage(text="IDを連携しました！エコーが緊急だと考えた時はこちらに警告が来ます!"))
 
     cur.close()
     conn.close()
