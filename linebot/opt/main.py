@@ -21,10 +21,10 @@ app = Flask(__name__)
 # 環境変数取得
 YOUR_CHANNEL_ACCESS_TOKEN = os.environ["YOUR_CHANNEL_ACCESS_TOKEN"]
 YOUR_CHANNEL_SECRET = os.environ["YOUR_CHANNEL_SECRET"]
+MYSQL_PASS = os.environ["MYSQL_PASSWORD"]
 
 line_bot_api = LineBotApi(YOUR_CHANNEL_ACCESS_TOKEN)
 handler = WebhookHandler(YOUR_CHANNEL_SECRET)
-MYSQL_PASS = os.environ["MYSQL_PASSWORD"]
 
 
 @app.route("/callback", methods=["POST"])
@@ -87,7 +87,9 @@ def handle_message(event):
             ),
         )
         conn.commit()
-        line_bot_api.reply_message(event.reply_token, TextSendMessage(text="IDを連携しました！エコーが緊急だと考えた時はこちらに警告が来ます!"))
+
+        textx = f"IDを連携しました！エコーが緊急だと考えた時はこちらに警告が来ます!\n取得したデータはここから閲覧できます : https://jphacks.github.io/KB_2316/dashboard/{uuid}"
+        line_bot_api.reply_message(event.reply_token, TextSendMessage(text=textx))
 
     cur.close()
     conn.close()
