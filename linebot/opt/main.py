@@ -24,6 +24,7 @@ YOUR_CHANNEL_SECRET = os.environ["YOUR_CHANNEL_SECRET"]
 
 line_bot_api = LineBotApi(YOUR_CHANNEL_ACCESS_TOKEN)
 handler = WebhookHandler(YOUR_CHANNEL_SECRET)
+MYSQL_PASS = os.environ["MYSQL_PASSWORD"]
 
 
 @app.route("/callback", methods=["POST"])
@@ -59,7 +60,7 @@ def handle_message(event):
     uuid = event.message.text
     userid = event.source.user_id
 
-    conn = mysql.connector.connect(user="root", password="kv3riopme1act", host="133.242.18.204", database="data")
+    conn = mysql.connector.connect(user="root", password=MYSQL_PASS, host="133.242.18.204", database="data")
 
     if not conn.is_connected():
         raise Exception("MySQLサーバーへ接続できません")
