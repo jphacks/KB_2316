@@ -1,1 +1,1 @@
-export const API_URL = "https://rits-sec.net/";
+export const API_URL = "https://rits-sec.net";
