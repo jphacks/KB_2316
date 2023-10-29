@@ -1,7 +1,6 @@
 # サンプル（プロダクト名）
 
-[![IMAGE ALT TEXT HERE](https://jphacks.com/wp-content/uploads/2023/07/JPHACKS2023_ogp.png)](https://www.youtube.com/watch?v=yYRQEdfGjEg)
-
+[![IMAGE ALT TEXT HERE](）
 ## 製品概要
 ### 背景(製品開発のきっかけ、課題等）
 少子高齢化に伴いお年寄りの介護や見守りについての課題がある。それについての解決ができれば良いなと思った。
