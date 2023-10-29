@@ -29,21 +29,32 @@ LINEBOTと連携し、idを登録すると、1日に1度もトイレに行って
 
 ## 開発技術　
 ### 活用した技術
-#### API・データ
-* mysql
-* line massaging api
 
-#### フレームワーク・ライブラリ・モジュール
-* gorm
-* React (Nex.js)
-* echo
+#### エコーくん ( デバイス )
+
+* Raspberry pi pico W
+* 超音波センサ
+* 3Dプリント
+
+#### LINE通知BOT
+
 * flask
 * mysql-connecter-python
+* LINE Messaging API
+
+#### データ収集バックエンド
+
+* Go言語
+* gorm
+* echo
+* MySQL
+
+#### データ表示Webアプリ
+
+* Next.js (React)
 
 
-#### デバイス
-* Raspberry Pi Pico
-* 超音波センサ
+
 
 ### 独自技術
 #### ハッカソンで開発した独自機能・技術
