@@ -60,8 +60,6 @@ LINEID : @416kazqn
 
 #### データ収集ソフト
 
-URL : 133.242.18.204
-
 * Go言語
 * gorm
 * echo
