@@ -66,6 +66,7 @@ URL : https://r-frontend.vercel.app/
 検証用ID : b7f0542f
 
 * Next.js (React)
+* Material Kit - React (OSS)
 
 
 ### 独自技術
