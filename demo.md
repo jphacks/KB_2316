@@ -31,5 +31,10 @@ LINEの友達検索機能にて「@416kazqn」と入力して検索を行うと�
 
 https://r-frontend.vercel.app/dashboard/b7f0542f
 
+### 警告イメージ
+
+17:00になってもデバイスが検知していない場合、LINEBOTが警告を送信します。
+
+![スクリーンショット 2023-10-31 16 19 14](https://github.com/jphacks/KB_2316/assets/79553411/db31d672-813f-41ad-aa93-325ede9e6997)
 
 
