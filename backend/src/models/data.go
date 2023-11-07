@@ -10,7 +10,7 @@ import (
 
 type Count struct {
 	gorm.Model
-	Count int    `gorm:"default:1" json:"count"`
+	Count int    `json:"count"`
 	UUID  string `gorm:"not null" json:"uuid" param:"uuid"`
 }
 

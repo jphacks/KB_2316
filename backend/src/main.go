@@ -44,7 +44,12 @@ func main() {
 
 	e := echo.New()
 
-	e.Use(middleware.CORS())
+	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+		AllowOrigins:     []string{"*"},                              // すべてのオリジンを許可
+		AllowMethods:     []string{echo.GET, echo.POST, echo.DELETE}, // すべてのHTTPメソッドを許可
+		AllowHeaders:     []string{"*"},                              // すべてのヘッダーを許可
+		AllowCredentials: true,                                       // 資格情報を許可
+	}))
 
 	g := e.Group("/api/v1")
 
@@ -54,6 +59,9 @@ func main() {
 
 	g.GET("/get/:uuid/:year/:month/:day", GetDayRecord)
 
+	g.POST("/set/:uuid/:year/:month/:day", setElimDate)
+
+	g.DELETE("/set/:uuid/:year/:month/:day", resetElimDate)
 	g.GET("/health", func(c echo.Context) error {
 		return c.JSON(http.StatusOK, "health : OK")
 	})
@@ -65,6 +73,7 @@ func main() {
 func CreateRecord(c echo.Context) error {
 	var d models.Count
 	d.UUID = c.Param("uuid")
+	d.Count = 1
 
 	if err := db.Create(&d).Error; err != nil {
 		return c.JSON(http.StatusInternalServerError, echo.Map{
@@ -168,4 +177,51 @@ func GetDayRecord(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusOK, data)
+}
+
+func setElimDate(c echo.Context) error {
+
+	// 日付にcount=0のデータを挿入する
+	var uuid, year, month, day = c.Param("uuid"), c.Param("year"), c.Param("month"), c.Param("day")
+
+	month = fmt.Sprintf("%02s", month)
+	day = fmt.Sprintf("%02s", day)
+
+	date, _ := time.Parse("2006-01-02 15:04:05", fmt.Sprintf("%s-%s-%s 00:00:00", year, month, day))
+
+	var d models.Count
+	d.UUID = uuid
+	d.Count = 0
+	d.CreatedAt = date
+
+	if err := db.Create(&d).Error; err != nil {
+		return c.JSON(http.StatusInternalServerError, echo.Map{
+			"message": "Error occurred",
+			"error":   err.Error(),
+		})
+	}
+
+	return c.JSON(http.StatusOK, d)
+}
+
+func resetElimDate(c echo.Context) error {
+	var uuid, year, month, day = c.Param("uuid"), c.Param("year"), c.Param("month"), c.Param("day")
+
+	month = fmt.Sprintf("%02s", month)
+	day = fmt.Sprintf("%02s", day)
+
+	date, _ := time.Parse("2006-01-02 15:04:05", fmt.Sprintf("%s-%s-%s 00:00:00", year, month, day))
+
+	var d models.Count
+	d.UUID = uuid
+	d.CreatedAt = date
+
+	if err := db.Where("uuid = ? AND created_at = ?", uuid, date).Delete(&d).Error; err != nil {
+		return c.JSON(http.StatusInternalServerError, echo.Map{
+			"message": "Error occurred",
+			"error":   err.Error(),
+		})
+	}
+
+	return c.JSON(http.StatusOK, d)
 }
