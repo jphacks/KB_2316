@@ -96,11 +96,14 @@ func GetDayRecord(c echo.Context) error {
 	data := []int{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
 	var user models.User
 
+	month = fmt.Sprintf("%02s", month)
+	day = fmt.Sprintf("%02s", day)
+
 	startTime, _ := time.Parse("2006-01-02 15:04:05", fmt.Sprintf("%s-%s-%s 00:00:00", year, month, day))
 	endTime, _ := time.Parse("2006-01-02 15:04:05", fmt.Sprintf("%s-%s-%s 23:59:59", year, month, day))
 
 	if err := db.Where("uuid = ?", uuid).
-		Preload("Counts", "created_at BETWEEN ? AND ?", startTime, endTime).
+		Preload("Counts", "count = 1 AND created_at BETWEEN ? AND ?", startTime, endTime).
 		Find(&user).Error; err != nil {
 		return c.JSON(http.StatusNotFound, echo.Map{
 			"message": "User not found or another error occurred",
