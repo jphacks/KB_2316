@@ -45,6 +45,11 @@ def callback():
     return "OK"
 
 
+@app.route("/health", methods=["POST"])
+def health():
+    return "200 OK"
+
+
 @handler.add(FollowEvent)  # FollowEventをimportするのを忘れずに！
 def follow_message(event):  # event: LineMessagingAPIで定義されるリクエストボディ
     # print(event)
