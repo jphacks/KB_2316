@@ -50,13 +50,49 @@ def health():
     return "200 OK"
 
 
+@app.route("/emergency/<uuid>", methods=["POST"])
+def emergency(uuid, event):
+    # 1パスパラメータからuuidを受け取り、変数に格納
+    # 関数の引数として用意されている
+
+    # 2uuidを元にsqlから紐づいたuseridを取得
+    # 2-1 msqlに接続
+    conn = mysql.connector.connect(
+        user="root", password=MYSQL_PASS, host="133.242.18.204", database="data"
+    )
+
+    cur = conn.cursor(dictionary=True)
+
+    if not conn.is_connected():
+        raise Exception("MySQLサーバーへ接続できません")
+
+    # 2-2 sql文を用意
+    query_counts = f"""
+    SELECT user_name FROM users
+    WHERE uuid = '{uuid}'
+    """
+
+    # 2-3 データを取得して変数に格
+    cur.execute(query_counts)
+    result = cur.fetchall()
+
+    cur.close()
+    conn.close()
+    # 3useridに対してメッセージを送信
+    if result:
+        line_bot_api.push_message(
+            result[0]["user_name"], TextSendMessage(text="緊急事態発生！")
+        )
+
+
 @handler.add(FollowEvent)  # FollowEventをimportするのを忘れずに！
 def follow_message(event):  # event: LineMessagingAPIで定義されるリクエストボディ
     # print(event)
 
     if event.type == "follow":  # フォロー時のみメッセージを送信
         line_bot_api.reply_message(
-            event.reply_token, TextSendMessage(text="エコーを利用してくれてありがとう☺️\n連携のためにエコーに記載されているIDを送信してね！")
+            event.reply_token,
+            TextSendMessage(text="エコーを利用してくれてありがとう☺️\n連携のためにエコーに記載されているIDを送信してね！"),
         )  # イベントの応答に用いるトークン
 
 
@@ -65,7 +101,9 @@ def handle_message(event):
     uuid = event.message.text
     userid = event.source.user_id
 
-    conn = mysql.connector.connect(user="root", password=MYSQL_PASS, host="133.242.18.204", database="data")
+    conn = mysql.connector.connect(
+        user="root", password=MYSQL_PASS, host="133.242.18.204", database="data"
+    )
 
     if not conn.is_connected():
         raise Exception("MySQLサーバーへ接続できません")
@@ -80,7 +118,10 @@ def handle_message(event):
     result = cur.fetchall()
 
     if not result:
-        line_bot_api.reply_message(event.reply_token, TextSendMessage(text="IDが間違っている可能性があります💦 もう一度ご確認ください🙇‍♂️"))
+        line_bot_api.reply_message(
+            event.reply_token,
+            TextSendMessage(text="IDが間違っている可能性があります💦 もう一度ご確認ください🙇‍♂️"),
+        )
     else:
         # SQLに登録
 
@@ -93,9 +134,7 @@ def handle_message(event):
         )
         conn.commit()
 
-        textx = (
-            f"IDを連携しました！エコーが緊急だと考えた時はこちらに警告が来ます!\n取得したデータはここから閲覧できます\nhttps://r-frontend.vercel.app/dashboard/{uuid}"
-        )
+        textx = f"IDを連携しました！エコーが緊急だと考えた時はこちらに警告が来ます!\n取得したデータはここから閲覧できます\nhttps://r-frontend.vercel.app/dashboard/{uuid}"
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text=textx))
 
     cur.close()
