@@ -45,7 +45,7 @@ def callback():
     return "OK"
 
 
-@app.route("/health", methods=["GET"])
+@app.route("/health")
 def health():
     return "200 OK"
 
