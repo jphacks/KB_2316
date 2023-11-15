@@ -51,7 +51,7 @@ def health():
 
 
 @app.route("/emergency/<uuid>", methods=["POST"])
-def emergency(uuid, event):
+def emergency(uuid):
     # 1パスパラメータからuuidを受け取り、変数に格納
     # 関数の引数として用意されている
 
