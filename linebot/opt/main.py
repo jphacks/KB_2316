@@ -83,6 +83,7 @@ def emergency(uuid):
         line_bot_api.push_message(
             result[0]["user_name"], TextSendMessage(text="緊急事態発生！")
         )
+    return "OK"
 
 
 @handler.add(FollowEvent)  # FollowEventをimportするのを忘れずに！
