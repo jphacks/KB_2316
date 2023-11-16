@@ -150,10 +150,6 @@ def handle_message(event):
             line_bot_api.reply_message(event.reply_token, TextSendMessage(text=textx))
 
     elif message == "除外日設定をお願いします。":
-        line_bot_api.reply_message(
-            event.reply_token,
-            TextSendMessage(text="日付を選んでください🙇🏻‍♀️"),
-        )
         date_picker = TemplateSendMessage(
             alt_text="予定日を設定",
             template=ButtonsTemplate(
