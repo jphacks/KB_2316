@@ -107,6 +107,7 @@ def handle_message(event):
     conn = mysql.connector.connect(
         user="root", password=MYSQL_PASS, host="133.242.18.204", database="data"
     )
+    cur = conn.cursor(dictionary=True)
     if not conn.is_connected():
         raise Exception("MySQLサーバーへ接続できません")
 
@@ -124,7 +125,6 @@ def handle_message(event):
         SELECT * FROM counts
         WHERE uuid = '{uuid}'
         """
-        cur = conn.cursor(dictionary=True)
 
         cur.execute(query_counts)
         result = cur.fetchall()
