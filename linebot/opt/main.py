@@ -113,7 +113,7 @@ def handle_message(event):
     message = event.message.text
     userid = event.source.user_id
 
-    if uuid == "ID設定をお願いします。":
+    if message == "ID設定をお願いします。":
         line_bot_api.reply_message(
             event.reply_token,
             TextSendMessage(text="登録ですね、わかりました！IDを送信してください！"),
