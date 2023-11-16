@@ -108,7 +108,7 @@ def postback(event):
     print(event.postback.params["date"])
     line_bot_api.reply_message(
         event.reply_token,
-        TextSendMessage(text="エコーを利用してくれてありがとう☺️\n連携のためにエコーに記載されているIDを送信してね！"),
+        TextSendMessage(text=event.postback.parms["date"]),
     )  # イベントの応答に用いるトークン
 
 
@@ -124,11 +124,12 @@ def handle_message(event):
     message = event.message.text
     userid = event.source.user_id
 
-    if message == "ID設定をお願いします。":
+    if message == "ID設定をお願いします":
         line_bot_api.reply_message(
             event.reply_token,
             TextSendMessage(text="登録ですね、わかりました！IDを送信してください！"),
         )
+
     elif "-" in message:
         uuid = message
         query_counts = f"""
