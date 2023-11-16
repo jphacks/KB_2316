@@ -12,6 +12,11 @@ import os
 from dotenv import load_dotenv
 import mysql.connector
 from datetime import datetime
+from linebot.models import (
+    TemplateSendMessage,
+    ButtonsTemplate,
+    DatetimePickerTemplateAction,
+)
 
 
 # .envファイルの内容を読み込見込む
@@ -99,44 +104,74 @@ def follow_message(event):  # event: LineMessagingAPIで定義されるリクエ
 
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
-    uuid = event.message.text
-    userid = event.source.user_id
-
     conn = mysql.connector.connect(
         user="root", password=MYSQL_PASS, host="133.242.18.204", database="data"
     )
-
     if not conn.is_connected():
         raise Exception("MySQLサーバーへ接続できません")
 
-    query_counts = f"""
-    SELECT * FROM counts
-    WHERE uuid = '{uuid}'
-    """
-    cur = conn.cursor(dictionary=True)
+    message = event.message.text
+    userid = event.source.user_id
 
-    cur.execute(query_counts)
-    result = cur.fetchall()
-
-    if not result:
+    if uuid == "ID設定をお願いします。":
         line_bot_api.reply_message(
             event.reply_token,
-            TextSendMessage(text="IDが間違っている可能性があります💦 もう一度ご確認ください🙇‍♂️"),
+            TextSendMessage(text="登録ですね、わかりました！IDを送信してください！"),
         )
-    else:
-        # SQLに登録
+    elif "-" in message:
+        uuid = message
+        query_counts = f"""
+        SELECT * FROM counts
+        WHERE uuid = '{uuid}'
+        """
+        cur = conn.cursor(dictionary=True)
 
-        cur.execute(
-            "Insert INTO users (uuid,user_name) values(%s,%s)",
-            (
-                uuid,
-                userid,
+        cur.execute(query_counts)
+        result = cur.fetchall()
+
+        if not result:
+            line_bot_api.reply_message(
+                event.reply_token,
+                TextSendMessage(text="IDが間違っている可能性があります💦 もう一度ご確認ください🙇‍♂️"),
+            )
+        else:
+            # SQLに登録
+
+            cur.execute(
+                "Insert INTO users (uuid,user_name) values(%s,%s)",
+                (
+                    uuid,
+                    userid,
+                ),
+            )
+            conn.commit()
+
+            textx = f"IDを連携しました！エコーが緊急だと考えた時はこちらに警告が来ます!\n取得したデータはここから閲覧できます\nhttps://r-frontend.vercel.app/dashboard/{uuid}"
+            line_bot_api.reply_message(event.reply_token, TextSendMessage(text=textx))
+
+    elif message == "除外日設定をお願いします。":
+        line_bot_api.reply_message(
+            event.reply_token,
+            TextSendMessage(text="日付を選んでください🙇🏻‍♀️"),
+        )
+        date_picker = TemplateSendMessage(
+            alt_text="予定日を設定",
+            template=ButtonsTemplate(
+                text="予定日を設定",
+                title="YYYY-MM-dd",
+                actions=[
+                    DatetimePickerTemplateAction(
+                        label="設定",
+                        data="action=buy&itemid=1",
+                        mode="date",
+                        initial="2017-04-01",
+                        min="2017-04-01",
+                        max="2099-12-31",
+                    )
+                ],
             ),
         )
-        conn.commit()
-
-        textx = f"IDを連携しました！エコーが緊急だと考えた時はこちらに警告が来ます!\n取得したデータはここから閲覧できます\nhttps://r-frontend.vercel.app/dashboard/{uuid}"
-        line_bot_api.reply_message(event.reply_token, TextSendMessage(text=textx))
+        line_bot_api.reply_message(event.reply_token, date_picker)
 
     cur.close()
     conn.close()
