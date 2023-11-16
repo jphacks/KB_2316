@@ -108,7 +108,7 @@ def postback(event):
     print(event.postback.params["date"])
     line_bot_api.reply_message(
         event.reply_token,
-        TextSendMessage(text=event.postback.parms["date"]),
+        TextSendMessage(text="エコーを利用してくれてありがとう☺️\n連携のためにエコ"),
     )  # イベントの応答に用いるトークン
 
 
@@ -130,7 +130,31 @@ def handle_message(event):
             TextSendMessage(text="登録ですね、わかりました！IDを送信してください！"),
         )
 
-    elif "-" in message:
+    elif message == "除外日設定をお願いします。":
+        date_picker = TemplateSendMessage(
+            alt_text="予定日を設定",
+            template=ButtonsTemplate(
+                text="予定日を設定",
+                title="YYYY-MM-dd",
+                actions=[
+                    DatetimePickerTemplateAction(
+                        label="設定",
+                        data="action=buy&itemid=1",
+                        mode="date",
+                        initial="2017-04-01",
+                        min="2017-04-01",
+                        max="2099-12-31",
+                    )
+                ],
+            ),
+        )
+        line_bot_api.reply_message(event.reply_token, date_picker)
+
+    # if isinstance(event, PostbackEvent):
+    #     print(event.postback.params["date"])
+    #     line_bot_api.reply_message(event.reply_token, event.postback.params["date"])
+
+    else:
         uuid = message
         query_counts = f"""
         SELECT * FROM counts
@@ -159,30 +183,6 @@ def handle_message(event):
 
             textx = f"IDを連携しました！エコーが緊急だと考えた時はこちらに警告が来ます!\n取得したデータはここから閲覧できます\nhttps://r-frontend.vercel.app/dashboard/{uuid}"
             line_bot_api.reply_message(event.reply_token, TextSendMessage(text=textx))
-
-    elif message == "除外日設定をお願いします。":
-        date_picker = TemplateSendMessage(
-            alt_text="予定日を設定",
-            template=ButtonsTemplate(
-                text="予定日を設定",
-                title="YYYY-MM-dd",
-                actions=[
-                    DatetimePickerTemplateAction(
-                        label="設定",
-                        data="action=buy&itemid=1",
-                        mode="date",
-                        initial="2017-04-01",
-                        min="2017-04-01",
-                        max="2099-12-31",
-                    )
-                ],
-            ),
-        )
-        line_bot_api.reply_message(event.reply_token, date_picker)
-
-    # if isinstance(event, PostbackEvent):
-    #     print(event.postback.params["date"])
-    #     line_bot_api.reply_message(event.reply_token, event.postback.params["date"])
 
     cur.close()
     conn.close()
