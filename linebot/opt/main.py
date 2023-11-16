@@ -16,6 +16,7 @@ from linebot.models import (
     TemplateSendMessage,
     ButtonsTemplate,
     DatetimePickerTemplateAction,
+    PostbackEvent,
 )
 
 
@@ -168,6 +169,11 @@ def handle_message(event):
             ),
         )
         line_bot_api.reply_message(event.reply_token, date_picker)
+
+    else:
+        if isinstance(event, PostbackEvent):
+            print(event.postback.params["date"])
+            line_bot_api.reply_message(event.reply_token, event.postback.params["date"])
 
     cur.close()
     conn.close()
