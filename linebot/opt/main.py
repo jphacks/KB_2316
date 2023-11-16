@@ -99,16 +99,16 @@ def follow_message(event):  # event: LineMessagingAPIで定義されるリクエ
     if event.type == "follow":  # フォロー時のみメッセージを送信
         line_bot_api.reply_message(
             event.reply_token,
-            TextSendMessage(text="エコーを利用してくれてありがとう☺️\n連携のためにエコーに記載されているIDを送信してね！"),
+            TextSendMessage(text="わかりました！この日の警告は除外しておきます！"),
         )  # イベントの応答に用いるトークン
 
 
 @handler.add(PostbackEvent)
 def postback(event):
-    print(event.postback.params["date"])
+    date = event.postback.params["date"]
     line_bot_api.reply_message(
         event.reply_token,
-        TextSendMessage(text="エコーを利用してくれてありがとう☺️\n連携のためにエコ"),
+        TextSendMessage(text=date),
     )  # イベントの応答に用いるトークン
 
 
@@ -149,11 +149,7 @@ def handle_message(event):
             ),
         )
         line_bot_api.reply_message(event.reply_token, date_picker)
-
-    # if isinstance(event, PostbackEvent):
-    #     print(event.postback.params["date"])
-    #     line_bot_api.reply_message(event.reply_token, event.postback.params["date"])
-
+    # elifでどう書けばいいか思いつかないので一時else、-でフィルターかけてたけど受け取るtextはuuidではないので-はつかないのでだめ
     else:
         uuid = message
         query_counts = f"""
