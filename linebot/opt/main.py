@@ -108,7 +108,7 @@ def postback(event):
     date = event.postback.params["date"]
     line_bot_api.reply_message(
         event.reply_token,
-        TextSendMessage(text=date),
+        TextSendMessage(text="わかりました！" + date + "を除外日として設定します。"),
     )  # イベントの応答に用いるトークン
 
 
@@ -149,6 +149,7 @@ def handle_message(event):
             ),
         )
         line_bot_api.reply_message(event.reply_token, date_picker)
+
     # elifでどう書けばいいか思いつかないので一時else、-でフィルターかけてたけど受け取るtextはuuidではないので-はつかないのでだめ
     else:
         uuid = message
@@ -165,20 +166,38 @@ def handle_message(event):
                 event.reply_token,
                 TextSendMessage(text="IDが間違っている可能性があります💦 もう一度ご確認ください🙇‍♂️"),
             )
+
         else:
-            # SQLに登録
+            # ifでusersにメッセージから受け取ったusersnameがすでにあった場合はその処理を書くようなプログラム
+            # usersの中のuuidがメッセージから受け取ったuuidと同じでかつ＝OK、その行のuser_nameがuseridと同じの時の対処
+            query_counts = f"""
+            SELECT * FROM users
+            WHERE user_name = '{userid}'
+            """
 
-            cur.execute(
-                "Insert INTO users (uuid,user_name) values(%s,%s)",
-                (
-                    uuid,
-                    userid,
-                ),
-            )
-            conn.commit()
+            cur.execute(query_counts)
+            result = cur.fetchall()
 
-            textx = f"IDを連携しました！エコーが緊急だと考えた時はこちらに警告が来ます!\n取得したデータはここから閲覧できます\nhttps://r-frontend.vercel.app/dashboard/{uuid}"
-            line_bot_api.reply_message(event.reply_token, TextSendMessage(text=textx))
+            if not result:
+                # SQLに登録
+                cur.execute(
+                    "Insert INTO users (uuid,user_name) values(%s,%s)",
+                    (
+                        uuid,
+                        userid,
+                    ),
+                )
+                conn.commit()
+
+                textx = f"IDを連携しました！エコーが緊急だと考えた時はこちらに警告が来ます!\n取得したデータはここから閲覧できます\nhttps://r-frontend.vercel.app/dashboard/{uuid}"
+                line_bot_api.reply_message(
+                    event.reply_token, TextSendMessage(text=textx)
+                )
+
+            else:
+                line_bot_api.reply_message(
+                    event.reply_token, TextSendMessage(text="もうすでにそのIDは連携されています！")
+                )
 
     cur.close()
     conn.close()
