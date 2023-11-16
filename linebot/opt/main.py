@@ -103,6 +103,15 @@ def follow_message(event):  # event: LineMessagingAPIで定義されるリクエ
         )  # イベントの応答に用いるトークン
 
 
+@handler.add(PostbackEvent)
+def postback(event):
+    print(event.postback.params["date"])
+    line_bot_api.reply_message(
+        event.reply_token,
+        TextSendMessage(text="エコーを利用してくれてありがとう☺️\n連携のためにエコーに記載されているIDを送信してね！"),
+    )  # イベントの応答に用いるトークン
+
+
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
     conn = mysql.connector.connect(
@@ -170,10 +179,9 @@ def handle_message(event):
         )
         line_bot_api.reply_message(event.reply_token, date_picker)
 
-    else:
-        if isinstance(event, PostbackEvent):
-            print(event.postback.params["date"])
-            line_bot_api.reply_message(event.reply_token, event.postback.params["date"])
+    # if isinstance(event, PostbackEvent):
+    #     print(event.postback.params["date"])
+    #     line_bot_api.reply_message(event.reply_token, event.postback.params["date"])
 
     cur.close()
     conn.close()
