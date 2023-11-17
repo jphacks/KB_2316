@@ -32,6 +32,9 @@ line_bot_api = LineBotApi(YOUR_CHANNEL_ACCESS_TOKEN)
 handler = WebhookHandler(YOUR_CHANNEL_SECRET)
 
 
+ex_date = []
+
+
 @app.route("/callback", methods=["POST"])
 def callback():
     # get X-Line-Signature header value
@@ -110,6 +113,7 @@ def postback(event):
         event.reply_token,
         TextSendMessage(text="わかりました！" + date + "を除外日として設定します。"),
     )  # イベントの応答に用いるトークン
+    ex_date.append(date)
 
 
 @handler.add(MessageEvent, message=TextMessage)
