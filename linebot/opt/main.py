@@ -19,7 +19,6 @@ from linebot.models import (
     PostbackEvent,
 )
 
-
 # .envファイルの内容を読み込見込む
 load_dotenv()
 app = Flask(__name__)
@@ -99,12 +98,13 @@ def follow_message(event):  # event: LineMessagingAPIで定義されるリクエ
     if event.type == "follow":  # フォロー時のみメッセージを送信
         line_bot_api.reply_message(
             event.reply_token,
-            TextSendMessage(text="わかりました！この日の警告は除外しておきます！"),
+            TextSendMessage(text="エコーを利用してくれてありがとう☺️\n連携のためにエコーに記載されているIDを送信してね！"),
         )  # イベントの応答に用いるトークン
 
 
 @handler.add(PostbackEvent)
 def postback(event):
+    global date
     date = event.postback.params["date"]
     line_bot_api.reply_message(
         event.reply_token,
@@ -135,7 +135,7 @@ def handle_message(event):
             alt_text="予定日を設定",
             template=ButtonsTemplate(
                 text="予定日を設定",
-                title="YYYY-MM-dd",
+                title="Year/Month/Day",
                 actions=[
                     DatetimePickerTemplateAction(
                         label="設定",
@@ -150,7 +150,6 @@ def handle_message(event):
         )
         line_bot_api.reply_message(event.reply_token, date_picker)
 
-    # elifでどう書けばいいか思いつかないので一時else、-でフィルターかけてたけど受け取るtextはuuidではないので-はつかないのでだめ
     else:
         uuid = message
         query_counts = f"""
@@ -168,7 +167,6 @@ def handle_message(event):
             )
 
         else:
-            # ifでusersにメッセージから受け取ったusersnameがすでにあった場合はその処理を書くようなプログラム
             # usersの中のuuidがメッセージから受け取ったuuidと同じでかつ＝OK、その行のuser_nameがuseridと同じの時の対処
             query_counts = f"""
             SELECT * FROM users
