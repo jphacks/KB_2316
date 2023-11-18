@@ -156,7 +156,7 @@ def follow_message(event):  # event: LineMessagingAPIで定義されるリクエ
     if event.type == "follow":  # フォロー時のみメッセージを送信
         line_bot_api.reply_message(
             event.reply_token,
-            TextSendMessage(text="エコーを利用してくれてありがとう☺️\n連携のためにエコーに記載されているIDを送信してね！"),
+            TextSendMessage(text="エコーを利用してくれてありがとう☺️\メニューから操作してね！"),
         )  # イベントの応答に用いるトークン
 
 
@@ -278,7 +278,8 @@ def handle_message(event):
                 )
                 conn.commit()
 
-                textx = f"IDを連携しました！エコーが緊急だと考えた時はこちらに警告が来ます!\n取得したデータはここから閲覧できます\nhttps://r-frontend.vercel.app/dashboard/{uuid}"
+                textx = f"IDを連携しました！エコーが緊急だと考えた時はこちらに警告が来ます!\n取得したデータはここから閲覧できます\nhttps://r-f
+                rontend.vercel.app/dashboard/{uuid}"
                 line_bot_api.reply_message(
                     event.reply_token, TextSendMessage(text=textx)
                 )
