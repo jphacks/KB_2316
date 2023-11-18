@@ -144,7 +144,7 @@ def detect(uuid):
     if result:
         for result_one in result:
             line_bot_api.push_message(
-                result_one["user_name"], TextSendMessage(text="10分以上の滞在時間が検知されました。")
+                result_one["user_name"], TextSendMessage(text="センサーが感知しました。")
             )
     return "OK"
 
