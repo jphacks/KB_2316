@@ -204,7 +204,7 @@ def handle_message(event):
                 cur.execute(query_counts)
                 result = cur.fetchall()
 
-                if not result:
+                if result[0]["user_name"] == "":
                     query_delete = f"""
                     DELETE FROM users
                     WHERE uuid = '{uuid}'
