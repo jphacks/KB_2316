@@ -17,7 +17,7 @@ type Count struct {
 type User struct {
 	gorm.Model
 	UUID     string  `json:"uuid" param:"uuid"`
-	UserName string  `gorm:"type:varchar(100);not null"`
+	UserName string  `gorm:"type:varchar(100);"`
 	Counts   []Count `gorm:"foreignKey:UUID;references:UUID"`
 }
 
