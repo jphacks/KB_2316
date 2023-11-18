@@ -156,7 +156,7 @@ def follow_message(event):  # event: LineMessagingAPIで定義されるリクエ
     if event.type == "follow":  # フォロー時のみメッセージを送信
         line_bot_api.reply_message(
             event.reply_token,
-            TextSendMessage(text="エコーを利用してくれてありがとう\nメニューから操作してね"),
+            TextSendMessage(text="エコーを利用してくれてありがとう。メニューから操作してね"),
         )  # イベントの応答に用いるトークン
 
 
