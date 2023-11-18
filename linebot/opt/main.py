@@ -113,11 +113,16 @@ def postback(event):
 
     userid = event.source.user_id
     query_counts = f"""
-        SELECT uuid FROM users
-        WHERE user_name = '{userid}'
+        SELECT user_name FROM users
+        WHERE uuid = '{uuid}'
         """
     cur.execute(query_counts)
-    uuid = cur.fetchall()
+    result = cur.fetchall()
+
+    cur.close()
+    conn.close()
+
+    uuid = result[0]["uuid"]
 
     date = event.postback.params["date"]
     line_bot_api.reply_message(
