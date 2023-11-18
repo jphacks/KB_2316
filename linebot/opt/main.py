@@ -209,8 +209,8 @@ def handle_message(event):
                     DELETE FROM users
                     WHERE uuid = '{uuid}'
                     """
+                    cur.execute(query_delete)
 
-                cur.execute(query_delete)
                 # SQLに登録
                 cur.execute(
                     "Insert INTO users (uuid,user_name) values(%s,%s)",
