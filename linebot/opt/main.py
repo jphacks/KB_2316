@@ -199,10 +199,10 @@ def handle_message(event):
             if not result:
                 # SQLに登録
                 cur.execute(
-                    "Insert INTO users (uuid,user_name) values(%s,%s)",
+                    "UPDATE users SET user_name = %s WHERE uuid = %s",
                     (
-                        uuid,
                         userid,
+                        uuid,
                     ),
                 )
                 conn.commit()
