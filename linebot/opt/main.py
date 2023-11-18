@@ -18,6 +18,7 @@ from linebot.models import (
     DatetimePickerTemplateAction,
     PostbackEvent,
 )
+import requests
 
 # .envファイルの内容を読み込見込む
 load_dotenv()
@@ -30,9 +31,6 @@ MYSQL_PASS = os.environ["MYSQL_PASSWORD"]
 
 line_bot_api = LineBotApi(YOUR_CHANNEL_ACCESS_TOKEN)
 handler = WebhookHandler(YOUR_CHANNEL_SECRET)
-
-
-ex_date = []
 
 
 @app.route("/callback", methods=["POST"])
@@ -107,13 +105,13 @@ def follow_message(event):  # event: LineMessagingAPIで定義されるリクエ
 
 @handler.add(PostbackEvent)
 def postback(event):
-    global date
+    print(event)
     date = event.postback.params["date"]
     line_bot_api.reply_message(
         event.reply_token,
         TextSendMessage(text="わかりました！" + date + "を除外日として設定します。"),
     )  # イベントの応答に用いるトークン
-    ex_date.append(date)
+    # res = requests.post(f"https://rits-sec.net/api/v1/set/{uuid}/{year}/{month}/{day}")
 
 
 @handler.add(MessageEvent, message=TextMessage)
@@ -154,10 +152,10 @@ def handle_message(event):
         )
         line_bot_api.reply_message(event.reply_token, date_picker)
 
-    else:
+    elif "-" in message:
         uuid = message
         query_counts = f"""
-        SELECT * FROM counts
+        SELECT * FROM users
         WHERE uuid = '{uuid}'
         """
 
@@ -175,6 +173,7 @@ def handle_message(event):
             query_counts = f"""
             SELECT * FROM users
             WHERE user_name = '{userid}'
+            AND uuid = '{uuid}'
             """
 
             cur.execute(query_counts)
@@ -200,6 +199,12 @@ def handle_message(event):
                 line_bot_api.reply_message(
                     event.reply_token, TextSendMessage(text="もうすでにそのIDは連携されています！")
                 )
+
+    else:
+        line_bot_api.reply_message(
+            event.reply_token,
+            TextSendMessage(text="メッセージを送信する場合はメニューから選択してください🙇🏻‍♀️"),
+        )
 
     cur.close()
     conn.close()
