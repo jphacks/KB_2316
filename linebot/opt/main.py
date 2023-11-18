@@ -105,13 +105,29 @@ def follow_message(event):  # event: LineMessagingAPIで定義されるリクエ
 
 @handler.add(PostbackEvent)
 def postback(event):
-    print(event)
+    conn = mysql.connector.connect(
+        user="root", password=MYSQL_PASS, host="133.242.18.204", database="data"
+    )
+
+    cur = conn.cursor(dictionary=True)
+
+    userid = event.source.userId
+    query_counts = f"""
+        SELECT uuid FROM users
+        WHERE user_name = '{userid}'
+        """
+    cur.execute(query_counts)
+    uuid = cur.fetchall()
+
     date = event.postback.params["date"]
     line_bot_api.reply_message(
         event.reply_token,
         TextSendMessage(text="わかりました！" + date + "を除外日として設定します。"),
     )  # イベントの応答に用いるトークン
-    # res = requests.post(f"https://rits-sec.net/api/v1/set/{uuid}/{year}/{month}/{day}")
+    year = date.split("-", 2)[0]
+    month = date.split("-", 2)[1]
+    day = date.split("-", 2)[2]
+    requests.post(f"https://rits-sec.net/api/v1/set/{uuid}/{year}/{month}/{day}")
 
 
 @handler.add(MessageEvent, message=TextMessage)
