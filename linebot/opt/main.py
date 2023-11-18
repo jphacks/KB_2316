@@ -201,7 +201,7 @@ def handle_message(event):
             WHERE uuid = '{uuid}'
             """
 
-            cur.execute(query_counts)
+            cur.execute(query_delete)
 
             if not result:
                 # SQLに登録
