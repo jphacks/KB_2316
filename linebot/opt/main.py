@@ -111,7 +111,7 @@ def postback(event):
 
     cur = conn.cursor(dictionary=True)
 
-    userid = event.source.userId
+    userid = event.source.user_id
     query_counts = f"""
         SELECT uuid FROM users
         WHERE user_name = '{userid}'
