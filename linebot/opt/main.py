@@ -86,9 +86,10 @@ def emergency(uuid):
     conn.close()
     # 3useridに対してメッセージを送信
     if result:
-        line_bot_api.push_message(
-            result[0]["user_name"], TextSendMessage(text="緊急事態発生！")
-        )
+        for result in result:
+            line_bot_api.push_message(
+                result[0]["user_name"], TextSendMessage(text="緊急事態発生！")
+            )
     return "OK"
 
 
