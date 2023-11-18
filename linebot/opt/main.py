@@ -93,6 +93,34 @@ def emergency(uuid):
     return "OK"
 
 
+@app.route("/time_long/<uuid>", methods=["POST"])
+def longtime_through(uuid):
+    conn = mysql.connector.connect(
+        user="root", password=MYSQL_PASS, host="133.242.18.204", database="data"
+    )
+
+    cur = conn.cursor(dictionary=True)
+
+    query_counts = f"""
+    SELECT user_name FROM users
+    WHERE uuid = '{uuid}'
+    """
+
+    # 2-3 データを取得して変数に格
+    cur.execute(query_counts)
+    result = cur.fetchall()
+
+    cur.close()
+    conn.close()
+
+    if result:
+        for result_one in result:
+            line_bot_api.push_message(
+                result_one["user_name"], TextSendMessage(text="10分以上の滞在時間が検知されました。")
+            )
+    return "OK"
+
+
 @handler.add(FollowEvent)  # FollowEventをimportするのを忘れずに！
 def follow_message(event):  # event: LineMessagingAPIで定義されるリクエストボディ
     # print(event)
