@@ -8,7 +8,7 @@ services:
     build: ./src/
     restart: always
     ports:
-      - "8080:1991"
+      - "80:1991"
   db:
     image: mysql:8
     volumes:
