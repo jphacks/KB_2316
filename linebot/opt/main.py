@@ -196,13 +196,18 @@ def handle_message(event):
             cur.execute(query_counts)
             result = cur.fetchall()
 
+            query_delete = f"""
+            DELETE FROM users
+            WHERE uuid = '{uuid}'
+            """
+
             if not result:
                 # SQLに登録
                 cur.execute(
-                    "UPDATE users SET user_name = %s WHERE uuid = %s",
+                    "Insert INTO users (uuid,user_name) values(%s,%s)",
                     (
-                        userid,
                         uuid,
+                        userid,
                     ),
                 )
                 conn.commit()
